@@ -60,8 +60,8 @@ html {
 }
 
 @keyframes milkyWayDrift {
-  0%, 100% { transform: rotate(35deg) translateY(0) scale(1); opacity: 0.45; }
-  50% { transform: rotate(35deg) translateY(-15px) scale(1.02); opacity: 0.65; }
+  0%, 100% { transform: rotate(35deg) translateY(0) scale(1); opacity: 0.15; }
+  50% { transform: rotate(35deg) translateY(-15px) scale(1.02); opacity: 0.22; }
 }
 
 .animate-milky-way {
@@ -99,9 +99,33 @@ html {
   animation: pulseDotEmerald 2s ease-in-out infinite;
 }
 
+/* Gradient text utilities */
+.text-gradient-blue-green {
+  background-image: linear-gradient(to right, #60a5fa, #34d399);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-white-blue {
+  background-image: linear-gradient(to right, #ffffff, #bfdbfe);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-white-green {
+  background-image: linear-gradient(to right, #ffffff, #a7f3d0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 /* Bulletproof CTA button styles - overrides external CSS injection (e.g. Cal.com embed) */
-.btn-colorful.btn-colorful {
+html body #root .btn-colorful.btn-colorful {
+  background: #ffffff !important;
   background-color: #ffffff !important;
+  background-image: none !important;
   border-radius: 9999px !important;
   border: none !important;
   box-shadow: 0 0 30px rgba(255, 255, 255, 0.15) !important;
@@ -113,9 +137,13 @@ html {
   gap: 8px !important;
   cursor: pointer !important;
   font-weight: 700 !important;
+  padding: 12px 48px !important;
+  font-size: 18px !important;
+  opacity: 1 !important;
+  filter: none !important;
 }
 
-.btn-colorful-text {
+#root .btn-colorful-text {
   background-image: linear-gradient(to right, #2563eb, #10b981) !important;
   -webkit-background-clip: text !important;
   background-clip: text !important;
