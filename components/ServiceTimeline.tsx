@@ -18,7 +18,6 @@ import {
   Presentation,
   ScanSearch,
   FileText,
-  Crosshair,
   Calculator,
   TrendingUp,
   Rocket,
@@ -36,6 +35,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { cn } from "../lib/utils";
+import { useTranslation } from "../i18n/LanguageContext";
 
 // ─── Theme definitions ───────────────────────────────────────────────
 
@@ -46,6 +46,8 @@ type CardTheme = {
   bgSubtle: string;
   border: string;
   borderSubtle: string;
+  hoverBorder: string;
+  hoverBg: string;
   gradientVia: string;
   iconBg: string;
   ring: string;
@@ -55,44 +57,50 @@ type CardTheme = {
 
 const purpleTheme: CardTheme = {
   text: "text-purple-400",
-  textLight: "text-purple-300",
-  bg: "bg-purple-500/10",
-  bgSubtle: "bg-purple-500/[0.04]",
-  border: "border-purple-500/25",
-  borderSubtle: "border-purple-500/10",
-  gradientVia: "via-purple-400/60",
-  iconBg: "bg-purple-500/15",
+  textLight: "text-purple-200",
+  bg: "bg-purple-500/20",
+  bgSubtle: "bg-purple-500/[0.10]",
+  border: "border-purple-500/40",
+  borderSubtle: "border-purple-500/25",
+  hoverBorder: "hover:border-purple-500/50",
+  hoverBg: "hover:bg-purple-500/20",
+  gradientVia: "via-purple-400/80",
+  iconBg: "bg-purple-500/25",
   ring: "ring-purple-500",
   shadowRgb: "168,85,247",
-  gradientFrom: "from-purple-500/[0.12]",
+  gradientFrom: "from-purple-500/[0.22]",
 };
 
 const blueTheme: CardTheme = {
   text: "text-blue-400",
-  textLight: "text-blue-300",
-  bg: "bg-blue-500/10",
-  bgSubtle: "bg-blue-500/[0.04]",
-  border: "border-blue-500/25",
-  borderSubtle: "border-blue-500/10",
-  gradientVia: "via-blue-400/60",
-  iconBg: "bg-blue-500/15",
+  textLight: "text-blue-200",
+  bg: "bg-blue-500/20",
+  bgSubtle: "bg-blue-500/[0.10]",
+  border: "border-blue-500/40",
+  borderSubtle: "border-blue-500/25",
+  hoverBorder: "hover:border-blue-500/50",
+  hoverBg: "hover:bg-blue-500/20",
+  gradientVia: "via-blue-400/80",
+  iconBg: "bg-blue-500/25",
   ring: "ring-blue-500",
   shadowRgb: "59,130,246",
-  gradientFrom: "from-blue-500/[0.12]",
+  gradientFrom: "from-blue-500/[0.22]",
 };
 
 const emeraldTheme: CardTheme = {
   text: "text-emerald-400",
-  textLight: "text-emerald-300",
-  bg: "bg-emerald-500/10",
-  bgSubtle: "bg-emerald-500/[0.04]",
-  border: "border-emerald-500/25",
-  borderSubtle: "border-emerald-500/10",
-  gradientVia: "via-emerald-400/60",
-  iconBg: "bg-emerald-500/15",
+  textLight: "text-emerald-200",
+  bg: "bg-emerald-500/20",
+  bgSubtle: "bg-emerald-500/[0.10]",
+  border: "border-emerald-500/40",
+  borderSubtle: "border-emerald-500/25",
+  hoverBorder: "hover:border-emerald-500/50",
+  hoverBg: "hover:bg-emerald-500/20",
+  gradientVia: "via-emerald-400/80",
+  iconBg: "bg-emerald-500/25",
   ring: "ring-emerald-500",
   shadowRgb: "16,185,129",
-  gradientFrom: "from-emerald-500/[0.12]",
+  gradientFrom: "from-emerald-500/[0.22]",
 };
 
 // ─── Animation variants ──────────────────────────────────────────────
@@ -128,10 +136,11 @@ function CardShell({
       className={cn(
         "relative overflow-hidden rounded-2xl border",
         theme.border,
-        `bg-gradient-to-b ${theme.gradientFrom} to-transparent`
+        `bg-gradient-to-b ${theme.gradientFrom} to-transparent`,
+        "bg-black/70 backdrop-blur-[12px] backdrop-brightness-[1.15] backdrop-saturate-[1.3]"
       )}
       style={{
-        boxShadow: `0 0 40px rgba(${theme.shadowRgb}, 0.06)`,
+        boxShadow: `0 0 40px rgba(${theme.shadowRgb}, 0.15), 0 0 80px rgba(255,255,255,0.04)`,
       }}
     >
       {/* Top shimmer accent line */}
@@ -143,6 +152,8 @@ function CardShell({
         )}
         style={{ animation: "shimmer 4s ease-in-out infinite" }}
       />
+      {/* White glass-edge highlight */}
+      <div className="h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
       <div className="p-6 md:p-8 lg:p-10">
         {/* Step number watermark */}
         <span
@@ -245,7 +256,7 @@ function BulletItem({
       <div className="text-sm leading-relaxed">
         <span className="text-white font-semibold">{lead}</span>
         {desc && (
-          <span className="text-neutral-400"> &ndash; {desc}</span>
+          <span className="text-neutral-300"> &ndash; {desc}</span>
         )}
       </div>
     </motion.li>
@@ -290,7 +301,7 @@ function NumberedStep({
       <div className={cn("pb-5", isLast && "pb-0")}>
         <span className="text-white font-semibold text-sm">{title}</span>
         {desc && (
-          <p className="text-neutral-500 text-xs mt-1 leading-relaxed">
+          <p className="text-neutral-400 text-xs mt-1 leading-relaxed">
             {desc}
           </p>
         )}
@@ -314,13 +325,13 @@ function MetricBadge({
         "px-3 py-2 rounded-lg border transition-colors duration-200",
         theme.bg,
         theme.borderSubtle,
-        `hover:${theme.border}`
+        theme.hoverBorder
       )}
     >
       <span className={cn("text-xs font-bold", theme.textLight)}>
         {value}
       </span>
-      <span className="text-xs text-neutral-500 ml-1.5">{label}</span>
+      <span className="text-xs text-neutral-400 ml-1.5">{label}</span>
     </div>
   );
 }
@@ -344,7 +355,7 @@ function LayerItem({
         "flex items-center gap-3 p-3 rounded-lg border transition-colors duration-200",
         theme.borderSubtle,
         theme.bgSubtle,
-        `hover:${theme.border}`
+        theme.hoverBorder
       )}
       style={{ marginLeft: `${index * 8}px` }}
       initial={{ opacity: 0, x: -20 }}
@@ -362,7 +373,7 @@ function LayerItem({
       </div>
       <div className="text-sm">
         <span className="text-white font-semibold">{name}</span>
-        <span className="text-neutral-500"> &ndash; {desc}</span>
+        <span className="text-neutral-400"> &ndash; {desc}</span>
       </div>
     </motion.div>
   );
@@ -400,17 +411,24 @@ function CardCTA({
 // ─── Card content components ─────────────────────────────────────────
 
 function WorkshopContent() {
-  const t = purpleTheme;
+  const theme = purpleTheme;
+  const { t } = useTranslation();
+  const ws = t.services.workshop;
+
+  const whatYouLearnIcons = [TrendingUp, Zap, Lightbulb, Sparkles];
+  const formatIcons = [Clock, MonitorPlay, Zap];
+  const resultIcons = [Target, Target, Target];
+
   return (
-    <CardShell theme={t} step="01">
-      <HeaderBadge icon={Presentation} text="60 Min | Online | Live" theme={t} />
+    <CardShell theme={theme} step="01">
+      <HeaderBadge icon={Presentation} text={ws.badge} theme={theme} />
 
       <h4 className="text-2xl md:text-3xl font-bold text-white leading-tight mb-2">
-        Dein Team versteht AI &ndash; und ist bereit, es anzuwenden.
+        {ws.headline}
       </h4>
 
       {/* Was du lernst */}
-      <SectionLabel text="Was du lernst" theme={t} />
+      <SectionLabel text={ws.sections.whatYouLearn} theme={theme} />
       <motion.ul
         variants={listContainerVariants}
         initial="hidden"
@@ -418,34 +436,19 @@ function WorkshopContent() {
         viewport={{ once: true, margin: "-40px" }}
         className="space-y-3"
       >
-        <BulletItem
-          icon={TrendingUp}
-          lead="Warum AI jetzt unverzichtbar ist"
-          desc="Markt-Kontext, Wettbewerb, deine Chance (kein Hype, sondern Business-Notwendigkeit)"
-          theme={t}
-        />
-        <BulletItem
-          icon={Zap}
-          lead="Sofort umsetzbare AI-Tools"
-          desc="Konkrete Use Cases mit 80-90% Zeitersparnis (Email-Entwürfe, Meeting-Zusammenfassungen, Datenanalyse)"
-          theme={t}
-        />
-        <BulletItem
-          icon={Lightbulb}
-          lead="AI als Unternehmens-Infrastruktur"
-          desc="Von einzelnen Tools zu automatisierten Systemen, die 24/7 laufen"
-          theme={t}
-        />
-        <BulletItem
-          icon={Sparkles}
-          lead="Kundenarbeit transformieren"
-          desc="Wie AI deine Response-Zeit von Stunden auf Sekunden reduziert und Conversion um 400% steigert"
-          theme={t}
-        />
+        {ws.whatYouLearnItems.map((item, i) => (
+          <BulletItem
+            key={i}
+            icon={whatYouLearnIcons[i]}
+            lead={item.lead}
+            desc={item.desc}
+            theme={theme}
+          />
+        ))}
       </motion.ul>
 
       {/* Das Format */}
-      <SectionLabel text="Das Format" theme={t} />
+      <SectionLabel text={ws.sections.format} theme={theme} />
       <motion.ul
         variants={listContainerVariants}
         initial="hidden"
@@ -453,28 +456,19 @@ function WorkshopContent() {
         viewport={{ once: true, margin: "-40px" }}
         className="space-y-3"
       >
-        <BulletItem
-          icon={Clock}
-          lead="1 Stunde Online"
-          desc="kompakt, praxisnah, branchenspezifisch angepasst"
-          theme={t}
-        />
-        <BulletItem
-          icon={MonitorPlay}
-          lead="Live-Demos"
-          desc="keine Theorie, sondern echte Workflows in Aktion"
-          theme={t}
-        />
-        <BulletItem
-          icon={Zap}
-          lead="Sofort-Aktionen"
-          desc="jeder Teilnehmer geht mit mindestens einer Idee raus, die er am nächsten Tag umsetzen kann"
-          theme={t}
-        />
+        {ws.formatItems.map((item, i) => (
+          <BulletItem
+            key={i}
+            icon={formatIcons[i]}
+            lead={item.lead}
+            desc={item.desc}
+            theme={theme}
+          />
+        ))}
       </motion.ul>
 
       {/* Das Ergebnis */}
-      <SectionLabel text="Das Ergebnis" theme={t} />
+      <SectionLabel text={ws.sections.result} theme={theme} />
       <motion.ul
         variants={listContainerVariants}
         initial="hidden"
@@ -482,72 +476,40 @@ function WorkshopContent() {
         viewport={{ once: true, margin: "-40px" }}
         className="space-y-3"
       >
-        <BulletItem
-          icon={Target}
-          lead="Dein Team versteht AI und ist bereit, es anzuwenden"
-          theme={t}
-        />
-        <BulletItem
-          icon={Target}
-          lead="Du siehst konkret, wo AI in deinem Business den größten Hebel hat"
-          theme={t}
-        />
-        <BulletItem
-          icon={Target}
-          lead="Natürliche Brücke zum tieferen AI Audit"
-          desc="falls gewünscht"
-          theme={t}
-        />
+        {ws.resultItems.map((item, i) => (
+          <BulletItem
+            key={i}
+            icon={resultIcons[i]}
+            lead={item.lead}
+            desc={item.desc}
+            theme={theme}
+          />
+        ))}
       </motion.ul>
 
-      <CardCTA text="Workshop anfragen" theme={t} />
+      <CardCTA text={ws.cta} theme={theme} />
     </CardShell>
   );
 }
 
 function AuditContent() {
-  const t = blueTheme;
-
-  const steps = [
-    {
-      title: "Diagnose",
-      desc: "Identifizierung deines teuersten Problems (nicht 'irgendwas automatisieren')",
-    },
-    {
-      title: "Prozess-Mapping",
-      desc: "Verstehen, was wirklich passiert (nicht die idealisierte Version)",
-    },
-    {
-      title: "Atomic Breakdown",
-      desc: "Jeder Prozess wird in kleinste Bestandteile zerlegt und auf KI-Eignung geprüft",
-    },
-    {
-      title: "Priorisierung",
-      desc: "Impact-Matrix: Quick Wins (sofort umsetzbar) vs. Big Swings (langfristig)",
-    },
-    {
-      title: "ROI-Berechnung",
-      desc: 'Harte Zahlen: Was kostet Inaction? Was bringt die Lösung?',
-    },
-    {
-      title: "Roadmap",
-      desc: "3-Phasen-Plan mit klaren Timelines und Prioritäten",
-    },
-  ];
+  const theme = blueTheme;
+  const { t } = useTranslation();
+  const audit = t.services.audit;
 
   return (
-    <CardShell theme={t} step="02">
-      <HeaderBadge icon={ScanSearch} text="2-8 Wochen | Intensive Begleitung" theme={t} />
+    <CardShell theme={theme} step="02">
+      <HeaderBadge icon={ScanSearch} text={audit.badge} theme={theme} />
 
       <h4 className="text-2xl md:text-3xl font-bold text-white leading-tight mb-2">
-        Finde die größten Chancen &ndash; mit harten Zahlen.
+        {audit.headline}
       </h4>
-      <p className="text-neutral-400 text-sm mb-2">
-        6-Schritt-Prozess zur vollständigen Diagnose:
+      <p className="text-neutral-300 text-sm mb-2">
+        {audit.processIntro}
       </p>
 
       {/* 6-step process as mini vertical timeline */}
-      <SectionLabel text="Was passiert" theme={t} />
+      <SectionLabel text={audit.sections.whatHappens} theme={theme} />
       <motion.div
         initial="hidden"
         whileInView="visible"
@@ -555,21 +517,21 @@ function AuditContent() {
         variants={listContainerVariants}
         className="space-y-0"
       >
-        {steps.map((step, i) => (
-          <motion.div key={step.title} variants={listItemVariants}>
+        {audit.steps.map((step, i) => (
+          <motion.div key={i} variants={listItemVariants}>
             <NumberedStep
               number={i + 1}
               title={step.title}
               desc={step.desc}
-              theme={t}
-              isLast={i === steps.length - 1}
+              theme={theme}
+              isLast={i === audit.steps.length - 1}
             />
           </motion.div>
         ))}
       </motion.div>
 
       {/* Was du bekommst - as metric badges */}
-      <SectionLabel text="Was du bekommst" theme={t} />
+      <SectionLabel text={audit.sections.whatYouGet} theme={theme} />
       <motion.div
         initial="hidden"
         whileInView="visible"
@@ -579,28 +541,26 @@ function AuditContent() {
       >
         <motion.div variants={listItemVariants}>
           <div className="flex flex-wrap gap-2 mb-3">
-            <MetricBadge value="20-40 Seiten" label="AI-Readiness Report" theme={t} />
-            <MetricBadge value="Top 5-10" label="Use Cases priorisiert" theme={t} />
+            {audit.metrics.map((m, i) => (
+              <MetricBadge key={i} value={m.value} label={m.label} theme={theme} />
+            ))}
           </div>
         </motion.div>
         <motion.ul variants={listContainerVariants} className="space-y-3">
-          <BulletItem
-            icon={Calculator}
-            lead='Konkrete Zahlen'
-            desc='z.B. "$1.040.000 entgangener Umsatz durch langsame Lead-Reaktion"'
-            theme={t}
-          />
-          <BulletItem
-            icon={Presentation}
-            lead="Live-Präsentation"
-            desc="60-90 Min. Walkthrough mit deinem Team"
-            theme={t}
-          />
+          {audit.deliverables.map((item, i) => (
+            <BulletItem
+              key={i}
+              icon={i === 0 ? Calculator : Presentation}
+              lead={item.lead}
+              desc={item.desc}
+              theme={theme}
+            />
+          ))}
         </motion.ul>
       </motion.div>
 
       {/* Das Ergebnis */}
-      <SectionLabel text="Das Ergebnis" theme={t} />
+      <SectionLabel text={audit.sections.result} theme={theme} />
       <motion.ul
         variants={listContainerVariants}
         initial="hidden"
@@ -608,73 +568,45 @@ function AuditContent() {
         viewport={{ once: true, margin: "-40px" }}
         className="space-y-3"
       >
-        <BulletItem
-          icon={TrendingUp}
-          lead="Du weißt genau, wo AI bei dir den größten Hebel hat"
-          theme={t}
-        />
-        <BulletItem
-          icon={TrendingUp}
-          lead="Klare Roadmap für die nächsten 6-12 Monate"
-          theme={t}
-        />
-        <BulletItem
-          icon={TrendingUp}
-          lead="Die Umsetzung (Implementation) ist der logische nächste Schritt"
-          desc="mit klaren Zahlen"
-          theme={t}
-        />
+        {audit.resultItems.map((item, i) => (
+          <BulletItem
+            key={i}
+            icon={TrendingUp}
+            lead={item.lead}
+            desc={item.desc}
+            theme={theme}
+          />
+        ))}
       </motion.ul>
 
-      <CardCTA text="Audit anfragen" theme={t} />
+      <CardCTA text={audit.cta} theme={theme} />
     </CardShell>
   );
 }
 
 function ImplementationContent() {
-  const t = emeraldTheme;
+  const theme = emeraldTheme;
+  const { t } = useTranslation();
+  const impl = t.services.implementation;
 
-  const layers = [
-    {
-      name: "Data Foundation",
-      desc: "Single Source of Truth für alle Daten",
-      icon: Database,
-    },
-    {
-      name: "Intelligence Engine",
-      desc: "Deine SOPs und Geschäftslogik werden ausführbarer Code",
-      icon: Cpu,
-    },
-    {
-      name: "Orchestration",
-      desc: "Agents arbeiten zusammen als System, nicht isoliert",
-      icon: GitBranch,
-    },
-    {
-      name: "Integration Framework",
-      desc: "Verbindungen zu deinen Tools – einmal gebaut, mehrfach genutzt",
-      icon: LayoutDashboard,
-    },
-    {
-      name: "Command Center",
-      desc: "Dashboard für ROI-Tracking und System-Monitoring",
-      icon: BarChart3,
-    },
-  ];
+  const processIcons = [Repeat, Timer, Gauge];
+  const layerIcons = [Database, Cpu, GitBranch, LayoutDashboard, BarChart3];
+  const advantageIcons = [Shield, TrendingUp, Shield];
+  const retainerIcons = [Wrench, Sparkles, TrendingUp];
 
   return (
-    <CardShell theme={t} step="03">
-      <HeaderBadge icon={Rocket} text="4-24 Wochen | Maßgeschneidert" theme={t} />
+    <CardShell theme={theme} step="03">
+      <HeaderBadge icon={Rocket} text={impl.badge} theme={theme} />
 
       <h4 className="text-2xl md:text-3xl font-bold text-white leading-tight mb-2">
-        Maßgeschneiderte Lösungen für dein Business.
+        {impl.headline}
       </h4>
-      <p className="text-neutral-400 text-sm mb-1">
-        Individuell entwickelte AI-Systeme basierend auf deinem AI Audit. Typische Projekte: AI-Agents, Prozessautomatisierung, Wissensmanagement, Multi-Agent-Systeme, Lead-Qualifizierung, Kundenservice-AI.
+      <p className="text-neutral-300 text-sm mb-1">
+        {impl.description}
       </p>
 
       {/* Der Prozess - always visible */}
-      <SectionLabel text="Der Prozess" theme={t} />
+      <SectionLabel text={impl.sections.process} theme={theme} />
       <motion.ul
         variants={listContainerVariants}
         initial="hidden"
@@ -682,24 +614,15 @@ function ImplementationContent() {
         viewport={{ once: true, margin: "-40px" }}
         className="space-y-3"
       >
-        <BulletItem
-          icon={Repeat}
-          lead="Iterativer Aufbau"
-          desc="Sprint-basiert mit wöchentlichen Checkpoints und Live-Demos"
-          theme={t}
-        />
-        <BulletItem
-          icon={Timer}
-          lead="Quick Wins zuerst"
-          desc="2-3 schnelle Erfolge in den ersten 4-8 Wochen (zeigen sofortigen ROI)"
-          theme={t}
-        />
-        <BulletItem
-          icon={Gauge}
-          lead="Dann Big Swings"
-          desc="Komplexere Systeme, die fundamentale Transformation bringen"
-          theme={t}
-        />
+        {impl.processItems.map((item, i) => (
+          <BulletItem
+            key={i}
+            icon={processIcons[i]}
+            lead={item.lead}
+            desc={item.desc}
+            theme={theme}
+          />
+        ))}
       </motion.ul>
 
       {/* Accordion for deeper sections */}
@@ -710,33 +633,33 @@ function ImplementationContent() {
             <AccordionTrigger
               className={cn(
                 "py-3 px-4 rounded-lg hover:no-underline transition-colors",
-                t.bgSubtle,
-                `hover:${t.bg}`
+                theme.bgSubtle,
+                theme.hoverBg
               )}
             >
               <span
                 className={cn(
                   "text-xs font-bold uppercase tracking-[0.15em]",
-                  t.text,
+                  theme.text,
                   "opacity-80"
                 )}
               >
-                Das AI Core-Konzept
+                {impl.sections.coreConcept}
               </span>
             </AccordionTrigger>
             <AccordionContent className="pt-4">
-              <p className="text-neutral-400 text-sm mb-4">
-                Wir bauen nicht isolierte Tools, sondern eine 5-Layer-Infrastruktur, die mit jedem Projekt mächtiger wird:
+              <p className="text-neutral-300 text-sm mb-4">
+                {impl.coreConceptIntro}
               </p>
               <div className="space-y-1.5">
-                {layers.map((layer, i) => (
+                {impl.layers.map((layer, i) => (
                   <LayerItem
-                    key={layer.name}
+                    key={i}
                     index={i}
                     name={layer.name}
                     desc={layer.desc}
-                    icon={layer.icon}
-                    theme={t}
+                    icon={layerIcons[i]}
+                    theme={theme}
                   />
                 ))}
               </div>
@@ -748,40 +671,31 @@ function ImplementationContent() {
             <AccordionTrigger
               className={cn(
                 "py-3 px-4 rounded-lg hover:no-underline transition-colors",
-                t.bgSubtle,
-                `hover:${t.bg}`
+                theme.bgSubtle,
+                theme.hoverBg
               )}
             >
               <span
                 className={cn(
                   "text-xs font-bold uppercase tracking-[0.15em]",
-                  t.text,
+                  theme.text,
                   "opacity-80"
                 )}
               >
-                Der Vorteil
+                {impl.sections.advantage}
               </span>
             </AccordionTrigger>
             <AccordionContent className="pt-4">
               <ul className="space-y-3">
-                <BulletItem
-                  icon={Shield}
-                  lead="Jedes Projekt wird günstiger"
-                  desc="Integrationen existieren bereits"
-                  theme={t}
-                />
-                <BulletItem
-                  icon={TrendingUp}
-                  lead="Jedes Projekt wird mächtiger"
-                  desc="Baut auf bestehenden Layers auf"
-                  theme={t}
-                />
-                <BulletItem
-                  icon={Shield}
-                  lead="Du bist nicht abhängig von einzelnen Tools"
-                  desc="Du besitzt die Infrastruktur"
-                  theme={t}
-                />
+                {impl.advantageItems.map((item, i) => (
+                  <BulletItem
+                    key={i}
+                    icon={advantageIcons[i]}
+                    lead={item.lead}
+                    desc={item.desc}
+                    theme={theme}
+                  />
+                ))}
               </ul>
             </AccordionContent>
           </AccordionItem>
@@ -791,77 +705,46 @@ function ImplementationContent() {
             <AccordionTrigger
               className={cn(
                 "py-3 px-4 rounded-lg hover:no-underline transition-colors",
-                t.bgSubtle,
-                `hover:${t.bg}`
+                theme.bgSubtle,
+                theme.hoverBg
               )}
             >
               <span
                 className={cn(
                   "text-xs font-bold uppercase tracking-[0.15em]",
-                  t.text,
+                  theme.text,
                   "opacity-80"
                 )}
               >
-                Was du bekommst
+                {impl.sections.deliverables}
               </span>
             </AccordionTrigger>
             <AccordionContent className="pt-4">
               {/* Phase grid */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-                <div
-                  className={cn(
-                    "text-center p-4 rounded-xl border",
-                    t.bgSubtle,
-                    t.borderSubtle
-                  )}
-                >
-                  <div className={cn("text-lg font-bold mb-1", t.textLight)}>
-                    4-8 Wo.
+                {impl.phases.map((phase, i) => (
+                  <div
+                    key={i}
+                    className={cn(
+                      "text-center p-4 rounded-xl border",
+                      theme.bgSubtle,
+                      theme.borderSubtle
+                    )}
+                  >
+                    <div className={cn("text-lg font-bold mb-1", theme.textLight)}>
+                      {phase.duration}
+                    </div>
+                    <div className="text-xs text-neutral-300">
+                      {phase.label}
+                    </div>
+                    <div className="text-xs text-neutral-400 mt-1">
+                      {phase.desc}
+                    </div>
                   </div>
-                  <div className="text-xs text-neutral-400">
-                    Phase 1: Quick Wins
-                  </div>
-                  <div className="text-xs text-neutral-500 mt-1">
-                    2-3 schnelle ROI-Nachweise
-                  </div>
-                </div>
-                <div
-                  className={cn(
-                    "text-center p-4 rounded-xl border",
-                    t.bgSubtle,
-                    t.borderSubtle
-                  )}
-                >
-                  <div className={cn("text-lg font-bold mb-1", t.textLight)}>
-                    8-24 Wo.
-                  </div>
-                  <div className="text-xs text-neutral-400">
-                    Phase 2: Big Swings
-                  </div>
-                  <div className="text-xs text-neutral-500 mt-1">
-                    Fundamentale Prozess-Transformation
-                  </div>
-                </div>
-                <div
-                  className={cn(
-                    "text-center p-4 rounded-xl border",
-                    t.bgSubtle,
-                    t.borderSubtle
-                  )}
-                >
-                  <div className={cn("text-lg font-bold mb-1", t.textLight)}>
-                    Ongoing
-                  </div>
-                  <div className="text-xs text-neutral-400">
-                    Phase 3: Skalierung
-                  </div>
-                  <div className="text-xs text-neutral-500 mt-1">
-                    Infrastruktur-Ausbau
-                  </div>
-                </div>
+                ))}
               </div>
-              <p className="text-neutral-500 text-xs">
-                Timeline: 4-24 Wochen (je nach Scope)
+              <p className="text-neutral-400 text-xs">
+                {impl.timeline}
               </p>
             </AccordionContent>
           </AccordionItem>
@@ -871,54 +754,48 @@ function ImplementationContent() {
             <AccordionTrigger
               className={cn(
                 "py-3 px-4 rounded-lg hover:no-underline transition-colors",
-                t.bgSubtle,
-                `hover:${t.bg}`
+                theme.bgSubtle,
+                theme.hoverBg
               )}
             >
               <span
                 className={cn(
                   "text-xs font-bold uppercase tracking-[0.15em]",
-                  t.text,
+                  theme.text,
                   "opacity-80"
                 )}
               >
-                Nach dem Go-Live
+                {impl.sections.postGoLive}
               </span>
             </AccordionTrigger>
             <AccordionContent className="pt-4">
               <div
                 className={cn(
                   "p-4 rounded-xl border",
-                  t.bgSubtle,
-                  t.borderSubtle
+                  theme.bgSubtle,
+                  theme.borderSubtle
                 )}
               >
                 <div className="flex items-center gap-2 mb-3">
-                  <CalendarCheck className={cn("w-4 h-4", t.text)} />
+                  <CalendarCheck className={cn("w-4 h-4", theme.text)} />
                   <span className="text-white font-semibold text-sm">
-                    Monthly Retainer (empfohlen)
+                    {impl.retainer.title}
                   </span>
                 </div>
                 <ul className="space-y-2 mb-3">
-                  <li className="flex items-start gap-2 text-sm text-neutral-400">
-                    <Wrench className={cn("w-3.5 h-3.5 mt-0.5 flex-shrink-0", t.text)} />
-                    Wartung, Monitoring, Optimierung
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-neutral-400">
-                    <Sparkles className={cn("w-3.5 h-3.5 mt-0.5 flex-shrink-0", t.text)} />
-                    Neue Features und Erweiterungen basierend auf Learnings
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-neutral-400">
-                    <TrendingUp className={cn("w-3.5 h-3.5 mt-0.5 flex-shrink-0", t.text)} />
-                    Sicherstellung, dass das System kontinuierlich besser wird
-                  </li>
+                  {impl.retainer.items.map((item, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-neutral-300">
+                      {React.createElement(retainerIcons[i], { className: cn("w-3.5 h-3.5 mt-0.5 flex-shrink-0", theme.text) })}
+                      {item}
+                    </li>
+                  ))}
                 </ul>
                 <div className="flex items-baseline gap-2">
-                  <span className={cn("text-lg font-bold", t.textLight)}>
-                    $1.000 &ndash; $5.000
+                  <span className={cn("text-lg font-bold", theme.textLight)}>
+                    {impl.retainer.price}
                   </span>
-                  <span className="text-neutral-500 text-xs">
-                    /Monat (je nach System-Komplexität)
+                  <span className="text-neutral-400 text-xs">
+                    {impl.retainer.priceSuffix}
                   </span>
                 </div>
               </div>
@@ -927,7 +804,7 @@ function ImplementationContent() {
         </Accordion>
       </div>
 
-      <CardCTA text="Projekt besprechen" theme={t} />
+      <CardCTA text={impl.cta} theme={theme} />
     </CardShell>
   );
 }
@@ -935,23 +812,31 @@ function ImplementationContent() {
 // ─── Main component ──────────────────────────────────────────────────
 
 export function ServiceTimeline() {
+  const { t } = useTranslation();
+
   const serviceData = [
     {
-      title: "AI Workshop",
+      title: t.services.workshop.title,
       titleColor: "#e9e5ff",
       content: <WorkshopContent />,
     },
     {
-      title: "AI Audit",
+      title: t.services.audit.title,
       titleColor: "#dbeafe",
       content: <AuditContent />,
     },
     {
-      title: "Implementation",
+      title: t.services.implementation.title,
       titleColor: "#d1fae5",
       content: <ImplementationContent />,
     },
   ];
 
-  return <Timeline data={serviceData} />;
+  return (
+    <Timeline
+      data={serviceData}
+      heading={t.services.heading}
+      description={t.services.subheading}
+    />
+  );
 }
