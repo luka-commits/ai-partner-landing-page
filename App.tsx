@@ -80,7 +80,7 @@ function App() {
             left: '-10%',
             width: '140%',
             height: '140%',
-            background: `linear-gradient(35deg, transparent 0%, transparent 28%, rgba(168,85,247,0.10) 35%, rgba(59,130,246,0.13) 40%, rgba(255,255,255,0.15) 46%, rgba(168,85,247,0.14) 50%, rgba(255,255,255,0.15) 54%, rgba(59,130,246,0.13) 60%, rgba(168,85,247,0.10) 65%, transparent 72%, transparent 100%)`,
+            background: `linear-gradient(35deg, transparent 0%, transparent 28%, rgba(168,85,247,0.15) 35%, rgba(59,130,246,0.18) 40%, rgba(255,255,255,0.22) 46%, rgba(168,85,247,0.20) 50%, rgba(255,255,255,0.22) 54%, rgba(59,130,246,0.18) 60%, rgba(168,85,247,0.15) 65%, transparent 72%, transparent 100%)`,
             filter: 'blur(30px)',
           }}
         />
