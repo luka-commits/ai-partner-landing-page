@@ -179,7 +179,7 @@ export function ProblemCompareSection() {
         </div>
 
         <div className="flex justify-center">
-          <div className="relative rounded-3xl">
+          <div className="relative rounded-3xl w-full md:w-auto">
             <GlowingEffect spread={30} glow={false} proximity={80} disabled={false} inactiveZone={0.3} borderWidth={1} />
           <div className="relative w-full md:w-auto p-3 border rounded-3xl bg-neutral-950 border-white/20 overflow-hidden" style={{ boxShadow: '0 4px 60px rgba(255,255,255,0.05), 0 0 1px rgba(255,255,255,0.15)' }}>
             <Compare
