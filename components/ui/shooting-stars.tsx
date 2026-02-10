@@ -27,7 +27,7 @@ export function ShootingStarsOverlay() {
     const render = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (shootingStarsRef.current.length < 3 && Math.random() < 0.0045) {
+      if (shootingStarsRef.current.length < 3 && Math.random() < 0.00315) {
         shootingStarsRef.current.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height * 0.6,

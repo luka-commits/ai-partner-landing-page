@@ -98,17 +98,17 @@ function MessengerIcon({ className }: { className?: string }) {
   );
 }
 
-const tools: { Icon: React.ComponentType<{ className?: string }>; color: string; hoverBg?: string; variant?: "dark" | "branded" }[] = [
-  { Icon: MakeIcon, color: "#6D00CC" },
+const tools: { Icon: React.ComponentType<{ className?: string }>; color: string; hoverBg?: string; variant?: "dark" | "branded" | "light" }[] = [
+  { Icon: MakeIcon, color: "#6D00CC", hoverBg: "#FFFFFF", variant: "dark" },
   { Icon: N8nIcon, color: "#EA4B71", hoverBg: "#EA4B71", variant: "branded" },
-  { Icon: SlackIcon, color: "#E01E5A" },
+  { Icon: SlackIcon, color: "#E01E5A", hoverBg: "#FFFFFF", variant: "light" },
   { Icon: GitHubIcon, color: "#181717", hoverBg: "#FFFFFF", variant: "dark" },
-  { Icon: MessengerIcon, color: "#0099FF" },
+  { Icon: MessengerIcon, color: "#0099FF", hoverBg: "#FFFFFF", variant: "light" },
   { Icon: NotionIcon, color: "#000000", hoverBg: "#FFFFFF", variant: "dark" },
-  { Icon: GoogleSheetsIcon, color: "#0F9D58" },
-  { Icon: HubSpotIcon, color: "#FF7A59" },
-  { Icon: GmailIcon, color: "#EA4335" },
-  { Icon: WhatsAppIcon, color: "#25D366" },
+  { Icon: GoogleSheetsIcon, color: "#0F9D58", hoverBg: "#FFFFFF", variant: "light" },
+  { Icon: HubSpotIcon, color: "#FF7A59", hoverBg: "#FFFFFF", variant: "light" },
+  { Icon: GmailIcon, color: "#EA4335", hoverBg: "#F2F2F2", variant: "light" },
+  { Icon: WhatsAppIcon, color: "#25D366", hoverBg: "#FFFFFF", variant: "light" },
 ];
 
 export function SocialProof() {
@@ -133,7 +133,7 @@ export function SocialProof() {
             {[...tools, ...tools, ...tools, ...tools].map((tool, i) => (
               <div
                 key={i}
-                className={`icon-card ${tool.variant === "dark" ? "icon-card-dark" : ""} ${tool.variant === "branded" ? "icon-card-branded" : ""} ${i % tools.length === activeIndex ? "icon-active" : ""} w-20 h-20 shrink-0 rounded-2xl bg-neutral-900 border border-white/20 flex items-center justify-center`}
+                className={`icon-card ${tool.variant === "dark" ? "icon-card-dark" : ""} ${tool.variant === "branded" ? "icon-card-branded" : ""} ${tool.variant === "light" ? "icon-card-light" : ""} ${i % tools.length === activeIndex ? "icon-active" : ""} w-20 h-20 shrink-0 rounded-2xl bg-neutral-900 border border-white/20 flex items-center justify-center`}
                 style={{ "--brand-color": tool.color, "--hover-bg": tool.hoverBg || "transparent" } as React.CSSProperties}
               >
                 <tool.Icon className="w-10 h-10" />

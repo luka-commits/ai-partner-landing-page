@@ -52,29 +52,46 @@ export const Compare = ({
   const handleMove = useCallback(
     (clientX) => {
       if (!sliderRef.current) return;
-      if (slideMode === "hover" || (slideMode === "drag" && isDragging)) {
-        const rect = sliderRef.current.getBoundingClientRect();
-        const x = clientX - rect.left;
-        const percent = (x / rect.width) * 100;
-        requestAnimationFrame(() => {
-          setSliderXPercent(Math.max(0, Math.min(100, percent)));
-        });
-      }
+      const rect = sliderRef.current.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const percent = (x / rect.width) * 100;
+      requestAnimationFrame(() => {
+        setSliderXPercent(Math.max(0, Math.min(100, percent)));
+      });
     },
-    [slideMode, isDragging]
+    []
   );
 
   return (
     <div
       ref={sliderRef}
       className={cn("relative overflow-hidden group", className)}
-      style={{ cursor: slideMode === "drag" ? "grab" : "col-resize" }}
-      onMouseMove={(e) => handleMove(e.clientX)}
-      onMouseEnter={() => { setIsMouseOver(true); stopAutoplay(); }}
-      onMouseLeave={() => { setIsMouseOver(false); if (slideMode === "hover") setSliderXPercent(initialSliderPercentage); }}
-      onMouseDown={() => slideMode === "drag" && setIsDragging(true)}
-      onMouseUp={() => setIsDragging(false)}
-      onTouchMove={(e) => handleMove(e.touches[0].clientX)}
+      style={{ cursor: slideMode === "drag" ? "grab" : "col-resize", touchAction: "none" }}
+      onPointerDown={(e) => {
+        e.preventDefault();
+        (e.target as Element).setPointerCapture(e.pointerId);
+        setIsMouseOver(true);
+        setIsDragging(true);
+        stopAutoplay();
+        handleMove(e.clientX);
+      }}
+      onPointerMove={(e) => {
+        if (e.pointerType === "mouse" || isDragging) {
+          handleMove(e.clientX);
+        }
+      }}
+      onPointerUp={() => {
+        setIsDragging(false);
+        setIsMouseOver(false);
+      }}
+      onPointerEnter={() => { setIsMouseOver(true); stopAutoplay(); }}
+      onPointerLeave={(e) => {
+        setIsMouseOver(false);
+        setIsDragging(false);
+        if (e.pointerType === "mouse" && slideMode === "hover") {
+          setSliderXPercent(initialSliderPercentage);
+        }
+      }}
     >
       <AnimatePresence initial={false}>
         <motion.div
@@ -109,13 +126,13 @@ export const Compare = ({
           transition={{ duration: 0 }}
         >
           <img alt="Before" src={firstImage} className="absolute inset-0 w-full h-full object-cover" draggable={false} />
-          <div className="absolute top-4 left-4 bg-black/50 backdrop-blur px-3 py-1 rounded text-xs text-white uppercase tracking-widest font-bold">Chaos</div>
+          <div className="absolute top-4 left-4 bg-black/50 backdrop-blur px-3 py-1 rounded text-xs text-white uppercase tracking-widest font-bold">Vorher</div>
         </motion.div>
       </div>
 
       <div className="absolute top-0 left-0 z-10 w-full h-full">
         <img alt="After" src={secondImage} className={cn("w-full h-full object-cover", secondImageClassname)} draggable={false} />
-        <div className="absolute top-4 right-4 bg-purple-500/50 backdrop-blur px-3 py-1 rounded text-xs text-white uppercase tracking-widest font-bold">Mit Partner</div>
+        <div className="absolute top-4 right-4 bg-purple-500/50 backdrop-blur px-3 py-1 rounded text-xs text-white uppercase tracking-widest font-bold">Nachher</div>
       </div>
     </div>
   );

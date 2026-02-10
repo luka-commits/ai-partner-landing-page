@@ -89,7 +89,7 @@ export function Hero() {
 
         {/* Dashboard Mockup */}
         <motion.div
-          className="relative max-w-4xl mx-auto"
+          className="relative max-w-4xl mx-auto scale-90 md:scale-100 origin-top"
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
@@ -172,7 +172,7 @@ export function Hero() {
               </div>
 
               {/* Bottom row: Big number card + Growth chart */}
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+              <div className="hidden md:grid md:grid-cols-5 gap-3">
                 {/* AI Systems deployed card with bar chart */}
                 <motion.div variants={itemVariants} whileHover={{ scale: 1.03, boxShadow: "inset 0 1px 0 rgba(52,211,153,0.15), 0 0 20px rgba(16,185,129,0.2), 0 0 40px rgba(16,185,129,0.08)" }} transition={{ type: "tween", duration: 0.2 }} className="md:col-span-2 p-5 rounded-2xl border border-emerald-500/25 bg-emerald-500/[0.06] relative overflow-hidden shadow-[inset_0_1px_0_rgba(52,211,153,0.15),0_0_30px_rgba(16,185,129,0.08)] cursor-pointer">
                   <div className="relative z-10">

@@ -1,7 +1,8 @@
 
-import React from "react";
+import React, { useState, useRef } from "react";
 import { Timeline } from "./ui/timeline";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { GlowingEffect } from "./ui/glowing-effect";
 import {
   Accordion,
   AccordionItem,
@@ -132,40 +133,50 @@ function CardShell({
   children: React.ReactNode;
 }) {
   return (
-    <div
-      className={cn(
-        "relative overflow-hidden rounded-2xl border",
-        theme.border,
-        `bg-gradient-to-b ${theme.gradientFrom} to-transparent`,
-        "bg-black/70 backdrop-blur-[12px] backdrop-brightness-[1.15] backdrop-saturate-[1.3]"
-      )}
-      style={{
-        boxShadow: `0 0 40px rgba(${theme.shadowRgb}, 0.15), 0 0 80px rgba(255,255,255,0.04)`,
-      }}
-    >
-      {/* Top shimmer accent line */}
+    <div className="relative rounded-2xl">
+      <GlowingEffect
+        spread={30}
+        glow={false}
+        proximity={80}
+        disabled={false}
+        inactiveZone={0.3}
+        borderWidth={1}
+      />
       <div
         className={cn(
-          "h-[2px] bg-gradient-to-r from-transparent",
-          theme.gradientVia,
-          "to-transparent bg-[length:200%_100%]"
+          "relative overflow-hidden rounded-2xl border",
+          theme.border,
+          `bg-gradient-to-b ${theme.gradientFrom} to-transparent`,
+          "bg-black/70 backdrop-blur-[12px] backdrop-brightness-[1.15] backdrop-saturate-[1.3]"
         )}
-        style={{ animation: "shimmer 4s ease-in-out infinite" }}
-      />
-      {/* White glass-edge highlight */}
-      <div className="h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-      <div className="p-6 md:p-8 lg:p-10">
-        {/* Step number watermark */}
-        <span
+        style={{
+          boxShadow: `0 0 40px rgba(${theme.shadowRgb}, 0.22), 0 0 80px rgba(255,255,255,0.07), 0 0 120px rgba(${theme.shadowRgb}, 0.08), inset 0 1px 0 rgba(255,255,255,0.06)`,
+        }}
+      >
+        {/* Top shimmer accent line */}
+        <div
           className={cn(
-            "absolute -top-4 -left-2 text-[5rem] md:text-[7rem] font-black leading-none select-none pointer-events-none",
-            theme.text,
-            "opacity-[0.05]"
+            "h-[2px] bg-gradient-to-r from-transparent",
+            theme.gradientVia,
+            "to-transparent bg-[length:200%_100%]"
           )}
-        >
-          {step}
-        </span>
-        <div className="relative">{children}</div>
+          style={{ animation: "shimmer 4s ease-in-out infinite" }}
+        />
+        {/* White glass-edge highlight */}
+        <div className="h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+        <div className="p-6 md:p-8 lg:p-10">
+          {/* Step number watermark */}
+          <span
+            className={cn(
+              "absolute -top-4 -left-2 text-[5rem] md:text-[7rem] font-black leading-none select-none pointer-events-none",
+              theme.text,
+              "opacity-[0.08]"
+            )}
+          >
+            {step}
+          </span>
+          <div className="relative">{children}</div>
+        </div>
       </div>
     </div>
   );
@@ -809,34 +820,160 @@ function ImplementationContent() {
   );
 }
 
+// ─── Mobile tabbed view ─────────────────────────────────────────────
+
+type TabDefinition = {
+  label: string;
+  accentBg: string;
+  borderClass: string;
+  shadowRgb: string;
+  content: React.ReactNode;
+};
+
+function MobileServiceTabs({
+  tabs,
+  heading,
+  description,
+}: {
+  tabs: TabDefinition[];
+  heading?: string;
+  description?: string;
+}) {
+  const [activeTab, setActiveTab] = useState(0);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  const handleTabChange = (index: number) => {
+    setActiveTab(index);
+    sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  return (
+    <div className="w-full bg-black/80 font-sans relative overflow-clip">
+      <div className="max-w-7xl mx-auto pt-20 pb-6 px-4">
+        {heading && (
+          <h2 className="text-3xl font-bold text-white mb-6 text-center">
+            {heading}
+          </h2>
+        )}
+        {description && (
+          <p className="text-neutral-400 text-lg max-w-2xl mx-auto text-center">
+            {description}
+          </p>
+        )}
+      </div>
+
+      {/* Sticky Tab Bar */}
+      <div
+        ref={sectionRef}
+        className="sticky top-[72px] z-40 bg-black/90 backdrop-blur-md border-b border-white/10 px-4 py-3"
+      >
+        <div className="flex gap-2 max-w-7xl mx-auto">
+          {tabs.map((tab, index) => (
+            <button
+              key={index}
+              onClick={() => handleTabChange(index)}
+              className={cn(
+                "relative flex-1 py-2.5 px-2 text-xs font-semibold rounded-xl transition-colors duration-300 cursor-pointer",
+                activeTab === index ? "text-white" : "text-neutral-500"
+              )}
+            >
+              {activeTab === index && (
+                <motion.div
+                  layoutId="activeTabBg"
+                  className={cn(
+                    "absolute inset-0 rounded-xl border",
+                    tab.accentBg + "/20",
+                    tab.borderClass
+                  )}
+                  style={{
+                    boxShadow: `0 0 20px rgba(${tab.shadowRgb}, 0.15)`,
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
+              <span className="relative z-10">{tab.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Tab Content */}
+      <div className="max-w-7xl mx-auto pt-6">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
+            className="px-4 pb-20"
+          >
+            {tabs[activeTab].content}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main component ──────────────────────────────────────────────────
 
 export function ServiceTimeline() {
   const { t } = useTranslation();
 
+  const workshopContent = <WorkshopContent />;
+  const auditContent = <AuditContent />;
+  const implContent = <ImplementationContent />;
+
   const serviceData = [
+    { title: t.services.workshop.title, titleColor: "#e9e5ff", content: workshopContent },
+    { title: t.services.audit.title, titleColor: "#dbeafe", content: auditContent },
+    { title: t.services.implementation.title, titleColor: "#d1fae5", content: implContent },
+  ];
+
+  const tabData: TabDefinition[] = [
     {
-      title: t.services.workshop.title,
-      titleColor: "#e9e5ff",
-      content: <WorkshopContent />,
+      label: t.services.workshop.title,
+      accentBg: "bg-purple-500",
+      borderClass: "border-purple-500/40",
+      shadowRgb: "168,85,247",
+      content: workshopContent,
     },
     {
-      title: t.services.audit.title,
-      titleColor: "#dbeafe",
-      content: <AuditContent />,
+      label: t.services.audit.title,
+      accentBg: "bg-blue-500",
+      borderClass: "border-blue-500/40",
+      shadowRgb: "59,130,246",
+      content: auditContent,
     },
     {
-      title: t.services.implementation.title,
-      titleColor: "#d1fae5",
-      content: <ImplementationContent />,
+      label: t.services.implementation.title,
+      accentBg: "bg-emerald-500",
+      borderClass: "border-emerald-500/40",
+      shadowRgb: "16,185,129",
+      content: implContent,
     },
   ];
 
   return (
-    <Timeline
-      data={serviceData}
-      heading={t.services.heading}
-      description={t.services.subheading}
-    />
+    <div id="services" className="scroll-mt-24">
+      {/* Mobile: Tabbed interface */}
+      <div className="md:hidden">
+        <MobileServiceTabs
+          tabs={tabData}
+          heading={t.services.heading}
+          description={t.services.subheading}
+        />
+      </div>
+
+      {/* Desktop: Scroll-driven timeline */}
+      <div className="hidden md:block">
+        <Timeline
+          data={serviceData}
+          heading={t.services.heading}
+          description={t.services.subheading}
+        />
+      </div>
+    </div>
   );
 }
