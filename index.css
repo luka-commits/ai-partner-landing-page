@@ -122,25 +122,21 @@ html {
 }
 
 /* Bulletproof CTA button styles - overrides external CSS injection (e.g. Cal.com embed) */
+/* Only visual properties here; layout (display, padding, font-size) controlled by Tailwind per instance */
 html body #root .btn-colorful.btn-colorful {
   background: #ffffff !important;
   background-color: #ffffff !important;
   background-image: none !important;
   border-radius: 9999px !important;
   border: none !important;
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.15) !important;
-  position: relative !important;
-  z-index: 50 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
-  cursor: pointer !important;
-  font-weight: 700 !important;
-  padding: 12px 48px !important;
-  font-size: 18px !important;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2), 0 0 40px rgba(255, 255, 255, 0.1) !important;
   opacity: 1 !important;
   filter: none !important;
+  cursor: pointer !important;
+  transition: box-shadow 0.3s ease !important;
+}
+html body #root .btn-colorful.btn-colorful:hover {
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.35), 0 0 50px rgba(255, 255, 255, 0.2) !important;
 }
 
 #root .btn-colorful-text {
@@ -156,4 +152,64 @@ html body #root .btn-colorful.btn-colorful {
 }
 .animate-pulse-glow {
   animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* ShimmerButton animations */
+@keyframes shimmer-slide {
+  to { transform: translate(calc(100cqw - 100%), 0); }
+}
+@keyframes spin-around {
+  0% { transform: translateZ(0) rotate(0); }
+  15%, 35% { transform: translateZ(0) rotate(90deg); }
+  65%, 85% { transform: translateZ(0) rotate(270deg); }
+  100% { transform: translateZ(0) rotate(360deg); }
+}
+.animate-shimmer-slide {
+  animation: shimmer-slide var(--speed) ease-in-out infinite alternate;
+}
+.animate-spin-around {
+  animation: spin-around calc(var(--speed) * 2) infinite linear;
+}
+
+/* Brand icon hover colors */
+.icon-card svg {
+  filter: grayscale(1) brightness(0.6);
+  transition: filter 0.3s ease;
+}
+.icon-card-dark svg {
+  filter: invert(1) grayscale(1) brightness(0.6);
+}
+.icon-card:hover svg {
+  filter: none;
+}
+.icon-card {
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+.icon-card:hover {
+  border-color: color-mix(in srgb, var(--brand-color) 40%, transparent);
+}
+.icon-card-dark:hover,
+.icon-card-branded:hover {
+  background-color: var(--hover-bg);
+}
+.icon-card-dark:hover {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+.icon-card.icon-active svg {
+  filter: none;
+}
+.icon-card.icon-active {
+  border-color: color-mix(in srgb, var(--brand-color) 40%, transparent);
+}
+.icon-card-dark.icon-active,
+.icon-card-branded.icon-active {
+  background-color: var(--hover-bg);
+}
+.icon-card-dark.icon-active {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+/* ─── GlowingEffect CSS ──────────────────────────────── */
+:root {
+  --black: #000000;
 }
